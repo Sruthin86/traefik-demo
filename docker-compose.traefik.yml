@@ -16,9 +16,10 @@ services:
       # Sets the the network for the docker provider
       # Traefik will only discover the services in connected to this network 
       - "--providers.docker.network=traefik_public"
-      - "--log.level=INFO"
+      # Enable the traefik API
       - "--api.insecure=true"
       - "--log.level=INFO"
+      # Enable the traefik dashboard
       - "--api.insecure=true"
     ports:
       - published: 80
