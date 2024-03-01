@@ -1,0 +1,49 @@
+---
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:latest
+    command:
+       # Add the docker provider and enable the swarm mode
+      - "--providers.docker=true"
+      - "--providers.docker.swarmMode=true"
+      # Exposing docker containers
+      # When set to false containers that don't have traefik enabled are removed from routing configuration
+      - "--providers.docker.exposedbydefault=false"
+      # Watch for docker events
+      - "--providers.docker.watch=true"
+      # Sets the the network for the docker provider
+      # Traefik will only discover the services in connected to this network 
+      - "--providers.docker.network=traefik_public"
+      - "--log.level=INFO"
+      - "--api.insecure=true"
+      - "--log.level=INFO"
+      - "--api.insecure=true"
+    ports:
+      - published: 80
+        target: 80
+        protocol: tcp
+        # host mode is used to bind the port to the host network
+        # these ports are accessible from outside the host using ip or DNS entries
+        mode: host
+    volumes:
+      # map the docker socker so traefik can monitor the changes in the docker socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Add a volume for traefik logs
+    deploy:
+      mode: global
+      placement:
+        max_replicas_per_node: 1
+      update_config:
+        failure_action: rollback
+      restart_policy:
+        window: 15s
+    networks:
+      - traefik_public
+
+# create a docker external network so traefik can communicate with other services
+networks:
+  traefik_public:
+    external: true
+
