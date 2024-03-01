@@ -18,9 +18,18 @@ services:
       - "--providers.docker.network=traefik_public"
       # Enable the traefik API
       - "--api.insecure=true"
-      - "--log.level=INFO"
       # Enable the traefik dashboard
-      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      # Entrypoints
+      # Enable web entry point and redirect to websecure
+      - "--entrypoints.web.address=:80"
+      # - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      # - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # Enable websecure entry point
+      - "--entrypoints.websecure.address=:443"
+      # Enable log level
+      - "--log.level=DEBUG"
+
     ports:
       - published: 80
         target: 80
@@ -28,6 +37,14 @@ services:
         # host mode is used to bind the port to the host network
         # these ports are accessible from outside the host using ip or DNS entries
         mode: host
+      - published: 8080
+        target: 8080
+        protocol: tcp
+        mode: host
+      - published: 443
+        target: 443
+        protocol: tcp
+        mode: host"
     volumes:
       # map the docker socker so traefik can monitor the changes in the docker socket
       - /var/run/docker.sock:/var/run/docker.sock:ro

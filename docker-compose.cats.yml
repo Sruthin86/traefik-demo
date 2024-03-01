@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  cats:
+    image: "unfor19/docker-cats"      
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.cats.rule=Host(`cats.localhost`)"
+        - "traefik.http.routers.cats.entrypoints=web"
+        - "traefik.http.services.cats.loadbalancer.server.port=8080"
+      mode: replicated
+      replicas: 3
+  
+networks:
+  traefik_public:
+    external: true
