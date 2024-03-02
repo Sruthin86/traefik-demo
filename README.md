@@ -38,7 +38,7 @@ docker stack deploy -c docker-compose.traefik.yml web
 ```
 
 ## Application stack
-* # TODO
+* #TODO
 * Deploy the `whoami` stack using
 ```
 docker stack deploy -c docker-compose.yml whoami  
@@ -79,10 +79,10 @@ traefik.http.routers.whoami.entrypoints=web,ep2,ep3
 * All entrypoints are assigned to all routers unless explicitly set.
 
 ### Services
-* # TODO
+* #TODO
 * A service can be assigned to multiple to multiple Routers
 * Breakdown of Traefik router label
-* List of available Services can be found here # TODO
+* List of available Services can be found here #TODO
 ```
 traefik.http.services.<service_name>.option
 
