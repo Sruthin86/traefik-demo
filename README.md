@@ -38,7 +38,7 @@ docker stack deploy -c docker-compose.traefik.yml web
 ```
 
 ## Application stack
-* TODO
+* # TODO
 * Deploy the `whoami` stack using
 ```
 docker stack deploy -c docker-compose.yml whoami  
@@ -50,3 +50,59 @@ docker stack deploy -c docker-compose.yml whoami
 * **Routers** analyze the requests (host, path, headers, ssl, ...)
 * **Services** forward the request to your services (load balancing, ...)
 * **Middlewares** may update the request or make decisions based on the request (auth, rate limiting, ip limiting, ...)
+
+## Traefik Help
+
+### Routers
+
+* Breakdown of Traefik router label
+```
+traefik.http.routers.<router_name>.rule
+
+# breakdown
+traefik - docker service
+http - protocol (can be http, tcp or udp)
+routers - Traefik configuration (can be services, middlewares)
+<router_name> - user defined name
+rule -  option (what are we doing to the router)
+
+# examples
+traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
+traefik.http.routers.whoami.entrypoints=web,ep2,ep3
+```
+* For each service Traefik creates a service and router. When no rules are set Traefik assigns a default rule
+* Priority of the rule is set based on the length of the rule unless explicitly set.
+* List of Router configurations can be found [here](https://doc.traefik.io/traefik/routing/routers/)
+
+### Entrypoints
+* 
+* All entrypoints are assigned to all routers unless explicitly set.
+
+### Services
+* # TODO
+* A service can be assigned to multiple to multiple Routers
+* Breakdown of Traefik router label
+* List of available Services can be found here # TODO
+```
+traefik.http.services.<service_name>.option
+
+# breakdown
+traefik - docker service
+http - protocol (can be http, tcp or udp)
+services - Traefik configuration (can be services, middlewares)
+<services_name> - user defined name
+
+
+# examples
+traefik.http.routers.whoami.loadbalancer.server.port=80
+```
+#### Load Balancers
+* Each service has its own Load Balancer, it is assigned by default
+* If we scale the application to more than one replicas it routes the requests to the replicas using Round Robin technique.
+* Load Balancers can be configured with Health Checks to monitor the heath of the Server.
+* The target of the Load Balancer is called the server 
+
+### Middlewares
+* Attached to Routers.
+* Means of tweaking requests before they reach services.
+* List of available HTTP Middlewares can be found [here](https://doc.traefik.io/traefik/middlewares/http/overview/)
