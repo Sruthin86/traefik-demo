@@ -43,3 +43,10 @@ docker stack deploy -c docker-compose.traefik.yml web
 ```
 docker stack deploy -c docker-compose.yml whoami  
 ```
+
+## Glossary
+* **Provides** discover services that live on the infrastructure.
+* **Entrypoints** listen for incoming traffic(ports, ...)
+* **Routers** analyze the requests (host, path, headers, ssl, ...)
+* **Services** forward the request to your services (load balancing, ...)
+* **Middlewares** may update the request or make decisions based on the request (auth, rate limiting, ip limiting, ...)
