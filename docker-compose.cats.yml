@@ -8,9 +8,9 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.cats.rule=Host(`cats.localhost`)"
-        - "traefik.http.routers.cats.entrypoints=web"
-        - "traefik.http.services.cats.loadbalancer.server.port=8080"
+        - "traefik.http.routers.${INSTANCE2:?error}.rule=Host(`${INSTANCE2:?error}.localhost`)"
+        - "traefik.http.routers.${INSTANCE2:?error}.entrypoints=web"
+        - "traefik.http.services.${INSTANCE2:?error}.loadbalancer.server.port=8080"
       mode: replicated
       replicas: 3
   
