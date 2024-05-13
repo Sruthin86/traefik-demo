@@ -8,9 +8,9 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-        - "traefik.http.routers.whoami.entrypoints=web"
-        - "traefik.http.services.whoami.loadbalancer.server.port=80"
+        - "traefik.http.routers.${INSTANCE1:?error}.rule=Host(`${INSTANCE1:?error}.localhost`)"
+        - "traefik.http.routers.${INSTANCE1:?error}.entrypoints=web"
+        - "traefik.http.services.${INSTANCE1:?error}.loadbalancer.server.port=80"
       mode: replicated
       replicas: 3
   

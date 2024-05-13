@@ -2,20 +2,33 @@
 version: "3.8"
 
 services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.jaeger.rule=Host(`jaeger.localhost`)"
+        - "traefik.http.routers.jaeger.entrypoints=web"
+        - "traefik.http.routers.jaeger.service=jaeger"
+        - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
+    networks:
+      - traefik_public
+
   traefik:
     image: traefik:latest
+    environment:
+      OTEL_PROPAGATORS: jaeger
     command:
        # Add the docker provider and enable the swarm mode
-      - "--providers.docker=true"
-      - "--providers.docker.swarmMode=true"
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
       # Exposing docker containers
       # When set to false containers that don't have traefik enabled are removed from routing configuration
-      - "--providers.docker.exposedbydefault=false"
+      - "--providers.swarm.exposedbydefault=false"
       # Watch for docker events
-      - "--providers.docker.watch=true"
+      - "--providers.swarm.watch=true"
       # Sets the the network for the docker provider
       # Traefik will only discover the services in connected to this network 
-      - "--providers.docker.network=traefik_public"
+      - "--providers.swarm.network=traefik_public"
       # Enable the traefik API
       - "--api.insecure=true"
       # Enable the traefik dashboard
@@ -29,7 +42,24 @@ services:
       - "--entrypoints.websecure.address=:443"
       # Enable log level
       - "--log.level=DEBUG"
-
+      # Enable tracing
+      - "--tracing=true"
+      - "--tracing.addinternals"
+      - "--tracing.serviceName=traefik"
+      - "--tracing.sampleRate=0.2"
+      - "--tracing.otlp.http=true"
+      - "--tracing.otlp.http.endpoint=http://jaeger:4318/v1/traces"
+      #- "--tracing.jaeger=true"
+      #- "--tracing.jaeger.samplingServerURL=http://localhost:5778/sampling"
+      #- "--tracing.jaeger.samplingType=const"
+      #- "--tracing.jaeger.samplingParam=1.0"
+      #- "--tracing.jaeger.localAgentHostPort=jaeger:6831"
+      #- "--tracing.jaeger.gen128Bit"
+      #- "--tracing.jaeger.propagation=jaeger"
+      #- "--tracing.jaeger.traceContextHeaderName=uber-trace-id"
+      #- "--tracing.jaeger.collector.endpoint=http://jaeger:14268/api/traces?format=jaeger.thrift"
+      #- "--tracing.jaeger.collector.user=my-user"
+      #- "--tracing.jaeger.collector.password=my-password"
     ports:
       - published: 80
         target: 80
