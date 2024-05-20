@@ -19,7 +19,7 @@ services:
     environment:
       OTEL_PROPAGATORS: jaeger
     command:
-       # Add the docker provider and enable the swarm mode
+       # Add the swarm provider
       - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
       # Exposing docker containers
       # When set to false containers that don't have traefik enabled are removed from routing configuration
