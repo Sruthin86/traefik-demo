@@ -1,0 +1,31 @@
+---
+version: "3.8"
+
+services:
+  dummy:
+    image: busybox:latest
+    command: sleep inf
+    networks:
+      - traefik_public
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        failure_action: rollback
+      restart_policy:
+        window: 15s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.${STACK:?error}.entrypoints=web"
+        # Add the host rule
+        - "traefik.http.routers.${STACK:?error}.rule=HeaderRegexp(`User-Agent`, `(?i)(Bytespider|AcademicBotRTU|GoogleOther|Amazonbot)`)"
+        # Add the ipwhitelist middleware
+        - "traefik.http.middlewares.${STACK:?error}-reject-all.ipwhitelist.sourcerange=127.0.0.1/32"
+        # Add midlewares to the router
+        - "traefik.http.routers.${STACK:?error}.middlewares=${STACK:?error}-reject-all"
+        # Add the traefik service
+        - "traefik.http.services.${STACK:?error}.loadbalancer.server.port=9999"
+
+networks:
+  traefik_public:
+    external: true
