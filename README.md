@@ -38,8 +38,22 @@ docker stack deploy -c docker-compose.traefik.yml web
 ```
 
 ## Application stack
-* TODO
 * Deploy the `whoami` stack using
 ```
-docker stack deploy -c docker-compose.yml whoami  
+INSTANCE1=whoami docker stack deploy -c docker-compose.whoami.yml whoami
 ```
+* Deploy the `cats` stack using
+```
+INSTANCE2=cats docker stack deploy -c docker-compose.cats.yml cats
+```
+* Deploy the `dummy` stack using
+```
+STACK=dummy docker stack deploy -c docker-compose.dummy.yml dummy
+```
+
+### Dummy service
+* The dummy service is used to block unwanted user agents. In this setup the user agents are defined in the traefik rules and are whitelisted when are from a local ip address. 
+* When the matching user agent is not from a whitelisted ip address a 403 response is returned
+
+### Jaeger service
+* TODO
