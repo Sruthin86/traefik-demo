@@ -55,5 +55,47 @@ STACK=dummy docker stack deploy -c docker-compose.dummy.yml dummy
 * The dummy service is used to block unwanted user agents. In this setup the user agents are defined in the traefik rules and are whitelisted when are from a local ip address. 
 * When the matching user agent is not from a whitelisted ip address a 403 response is returned
 
-### Jaeger service
-* TODO
+## Jaeger
+### Introduction
+
+#### Glossary
+##### Distributed tracing
+* Provides insights into how a particular request/service travels and performs in a distributed system.
+
+##### Zipkin
+* An open-source tracing system used for monitoring and profiling applications.
+* Optimized for http based communications.
+* An all-in-one tracing solution implemented in Java
+* Requires manual configuration and integration with code to collect data
+* Has a wide support for several programming languages ( Java, Python, Ruby, and JavaScript).
+
+##### OpenTelemetry Protocol (otlp)
+* An open-source tracing system used for monitoring and profiling applications.
+* Automated data collection outside the box.
+* Supports Java, Python, Go, .Net.
+
+##### Trace
+* Data execution path through the system.
+
+##### Span
+* A logical unit of work that happens within a system that has a start time, end time, and an operation time
+* Spans maybe nested, and can have an ordered relationship.
+
+#### List of ports
+| Port     | Protocol    | Component    | Function |
+| :---:    | :---:       |:---:         |:---:     | 
+|6831      |UDP          |agent         |accept jaeger.thrift over Thrift-compact protocol (used by most SDKs)|
+|6832      |UDP          |agent         |accept jaeger.thrift over Thrift-binary protocol (used by Node.js SDK)|
+|5778      |HTTP         |agent         |serve configs (sampling, etc.)|
+|16686     |HTTP         |query         |serve frontend|
+|4317      |HTTP         |collector     |accept OpenTelemetry Protocol (OTLP) over gRPC|
+|4318      |HTTP         |collector     |accept OpenTelemetry Protocol (OTLP) over HTTP|
+|14268     |HTTP         |collector     |accept jaeger.thrift directly from clients|
+|14250     |HTTP         |collector     |accept model.proto|
+|9411      |HTTP         |collector     |Zipkin compatible endpoint (optional)|
+
+* Key terms
+* Installation steps
+* Use cases
+* Demo/Troubleshooting
+* Alternatives

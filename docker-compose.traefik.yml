@@ -4,6 +4,8 @@ version: "3.8"
 services:
   jaeger:
     image: jaegertracing/all-in-one:1.57
+    environment:
+      OTEL_TRACES_SAMPLER: 'always_off'
     deploy:
       labels:
         - "traefik.enable=true"
@@ -44,11 +46,12 @@ services:
       - "--log.level=DEBUG"
       # Enable tracing
       - "--tracing=true"
-      - "--tracing.addinternals"
+      #- "--tracing.addinternals"
       - "--tracing.serviceName=traefik"
-      - "--tracing.sampleRate=0.2"
+      - "--tracing.sampleRate=1.0"
       - "--tracing.otlp.http=true"
       - "--tracing.otlp.http.endpoint=http://jaeger:4318/v1/traces"
+      - "--tracing.otlp.http.headers.foo=bar"
       #- "--tracing.jaeger=true"
       #- "--tracing.jaeger.samplingServerURL=http://localhost:5778/sampling"
       #- "--tracing.jaeger.samplingType=const"
