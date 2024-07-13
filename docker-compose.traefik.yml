@@ -52,17 +52,6 @@ services:
       - "--tracing.otlp.http=true"
       - "--tracing.otlp.http.endpoint=http://jaeger:4318/v1/traces"
       - "--tracing.otlp.http.headers.foo=bar"
-      #- "--tracing.jaeger=true"
-      #- "--tracing.jaeger.samplingServerURL=http://localhost:5778/sampling"
-      #- "--tracing.jaeger.samplingType=const"
-      #- "--tracing.jaeger.samplingParam=1.0"
-      #- "--tracing.jaeger.localAgentHostPort=jaeger:6831"
-      #- "--tracing.jaeger.gen128Bit"
-      #- "--tracing.jaeger.propagation=jaeger"
-      #- "--tracing.jaeger.traceContextHeaderName=uber-trace-id"
-      #- "--tracing.jaeger.collector.endpoint=http://jaeger:14268/api/traces?format=jaeger.thrift"
-      #- "--tracing.jaeger.collector.user=my-user"
-      #- "--tracing.jaeger.collector.password=my-password"
     ports:
       - published: 80
         target: 80
@@ -97,4 +86,3 @@ services:
 networks:
   traefik_public:
     external: true
-

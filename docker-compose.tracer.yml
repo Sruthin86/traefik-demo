@@ -1,0 +1,25 @@
+---
+version: '3.8'
+
+services:
+  tracer:
+    image: jaegertracing/all-in-one:1.57
+    environment:
+      OTEL_TRACES_SAMPLER: 'always_off'
+    ports:
+      - published: 6831
+        target: 6831
+        protocol: udp
+        # host mode is used to bind the port to the host network
+        # these ports are accessible from outside the host using ip or DNS entries
+        mode: host
+      - published: 16686
+        target: 16686
+        protocol: tcp
+        mode: host
+    
+  sample:
+    image: pythontracer
+    tty: true
+    volumes: 
+      - ${PWD}/sample_tracer.py:/sample_tracer.py

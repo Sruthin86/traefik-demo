@@ -74,12 +74,22 @@ STACK=dummy docker stack deploy -c docker-compose.dummy.yml dummy
 * Automated data collection outside the box.
 * Supports Java, Python, Go, .Net.
 
+##### gRPC
+* An open-source high performance Remote Procedure Call enabling communication between services
+* Efficient in transferring data in binary format
+* Request and response are unary (happens in the same call)
+
 ##### Trace
 * Data execution path through the system.
 
 ##### Span
 * A logical unit of work that happens within a system that has a start time, end time, and an operation time
 * Spans maybe nested, and can have an ordered relationship.
+
+##### Jaeger Agent
+
+##### Jaeger Collector
+
 
 #### List of ports
 | Port     | Protocol    | Component    | Function |
@@ -94,7 +104,77 @@ STACK=dummy docker stack deploy -c docker-compose.dummy.yml dummy
 |14250     |HTTP         |collector     |accept model.proto|
 |9411      |HTTP         |collector     |Zipkin compatible endpoint (optional)|
 
-* Key terms
+### Run Jaeger as a standalone tracing service
+* Run the docker Jaeger docker imager opening the ports which collect data and the UI port
+```
+docker run -d -p6831:6831/udp -p16686:16686 jaegertracing/all-in-one:1.57 
+```
+* Install the python jaeger client
+```
+pip install jaeger-client
+```
+* Run a sample python script to send spans to Jaeger
+```
+from jaeger_client import Config
+
+
+def construct_span(tracer):
+    with tracer.start_span('MSULTestSpan') as span:
+        span.log_kv({'event': 'test message', 'life': 42})
+        print("tracer.tages: ", tracer.tags)
+        with tracer.start_span('MSULTestChildSpan', child_of=span) as child_span:
+            # perform an operation
+            time.sleep(2)
+            span.log_kv({'event': 'here is another event'})
+        return span
+
+
+if __name__ == "__main__":
+    log_level = logging.DEBUG
+    logging.getLogger('').handlers = []
+    logging.basicConfig(format='%(asctime)s %(message)s', level=log_level)
+
+    config = Config(
+        config={ 
+            'sampler': {
+                'type': 'const',
+                'param': 1,
+            },
+            'local_agent': {
+                # Specify the hostname and port number of the Jaeger agent. 
+                'reporting_host': 'localhost',
+                'reporting_port': 6831,
+            },
+            'logging': True,
+        },
+        # Specify the application name.
+        service_name="MSUL",
+        validate=True
+    )
+
+    # this call also sets opentracing.tracer
+    tracer = config.initialize_tracer()
+
+    span = construct_span(tracer)
+
+    time.sleep(2)
+    tracer.close()
+```
+### Docker Swarm configuration of Jaeger
+* A sample python script exists in this repo which creates sample traces. Build the image that creates sample traces using
+```
+docker build ./ -t pythontracer    
+```
+* Deploy the `tracer` stack using
+```
+docker stack deploy -c docker-compose.tracer.yml jaeger
+```
+* Run the sample tracer script using
+```
+docker exec -it `docker ps -qf name="jaeger_sample"` python sample_tracer.py 
+```
+* The sample traces and spans can be viewed in Jaeger at `http://localhost:16686/`
+
 * Installation steps
 * Use cases
 * Demo/Troubleshooting
