@@ -57,10 +57,14 @@ STACK=dummy docker stack deploy -c docker-compose.dummy.yml dummy
 
 ## Jaeger
 ### Introduction
+* A distributed tracing platform to monitor the flow of data in complex distributed systems.
+* Maps the flow of data as it traverses through distributed systems
 
 #### Glossary
 ##### Distributed tracing
 * Provides insights into how a particular request/service travels and performs in a distributed system.
+* Traces data that travels through various micro services through API’s.
+* Improve observability and solve performance issues.
 
 ##### Zipkin
 * An open-source tracing system used for monitoring and profiling applications.
