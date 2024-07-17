@@ -1,7 +1,8 @@
 import logging
 import time
 from jaeger_client import Config
-
+# Importing the library
+import psutil
 
 def construct_span(tracer):
     with tracer.start_span('MSULTestSpan') as span:
@@ -9,8 +10,14 @@ def construct_span(tracer):
         print("tracer.tages: ", tracer.tags)
         with tracer.start_span('MSULTestChildSpan', child_of=span) as child_span:
             # perform an operation
-            time.sleep(2)
+            # time.sleep(10)
             span.log_kv({'event': 'here is another event'})
+            # span.log_kv({'cpu_usage': psutil.cpu_percent(4)})
+        #with tracer.start_span('MSULTestSecondChildSpan', child_of=span) as second_child_span:
+        #    # perform an operation
+        #    time.sleep(5)
+        #    span.log_kv({'event': 'here is another child event'})
+        #    span.log_kv({'cpu_usage': psutil.cpu_percent(4)})
         return span
 
 
