@@ -5,17 +5,17 @@ services:
   traefik:
     image: traefik:latest
     command:
-       # Add the docker provider and enable the swarm mode
-      - "--providers.docker=true"
-      - "--providers.docker.swarmMode=true"
+       # Add the swarm provider
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
       # Exposing docker containers
-      # When set to false containers that don't have traefik enabled are removed from routing configuration
-      - "--providers.docker.exposedbydefault=false"
+      # When set to false containers that don't have traefik enabled
+      # are removed from routing configuration
+      - "--providers.swarm.exposedbydefault=false"
       # Watch for docker events
-      - "--providers.docker.watch=true"
+      - "--providers.swarm.watch=true"
       # Sets the the network for the docker provider
-      # Traefik will only discover the services in connected to this network 
-      - "--providers.docker.network=traefik_public"
+      # Traefik will only discover the services in connected to this network
+      - "--providers.swarm.network=proxy"
       # Enable the traefik API
       - "--api.insecure=true"
       # Enable the traefik dashboard
@@ -23,12 +23,16 @@ services:
       # Entrypoints
       # Enable web entry point and redirect to websecure
       - "--entrypoints.web.address=:80"
-      # - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      # - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       # Enable websecure entry point
       - "--entrypoints.websecure.address=:443"
+      # Load certs from the host
+      - "--providers.file.directory=/etc/traefik/conf.d"
       # Enable log level
       - "--log.level=DEBUG"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/etc/traefik/access.log"
 
     ports:
       - published: 80

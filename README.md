@@ -41,11 +41,11 @@ docker stack deploy -c docker-compose.traefik.yml web
 * #TODO
 * Deploy the `whoami` stack using
 ```
-docker stack deploy -c docker-compose.yml whoami  
+docker stack deploy -c docker-compose.whoami.yml whoami  
 ```
 
 ## Glossary
-* **Provides** discover services that live on the infrastructure.
+* **Providers** discover services that live on the infrastructure.
 * **Entrypoints** listen for incoming traffic(ports, ...)
 * **Routers** analyze the requests (host, path, headers, ssl, ...)
 * **Services** forward the request to your services (load balancing, ...)
@@ -75,7 +75,7 @@ traefik.http.routers.whoami.entrypoints=web,ep2,ep3
 * List of Router configurations can be found [here](https://doc.traefik.io/traefik/routing/routers/)
 
 ### Entrypoints
-* 
+* #TODO
 * All entrypoints are assigned to all routers unless explicitly set.
 
 ### Services
